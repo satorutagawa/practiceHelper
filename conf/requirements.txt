@@ -6,3 +6,4 @@ matplotlib
 #pandas
 #sympy
 #nose
+git+https://github.com/mgedmin/python-midi@python3

@@ -2,6 +2,8 @@ import os
 import logging
 import scipy.io.wavfile
 import numpy as np
+import midi
+
 #import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
@@ -12,7 +14,7 @@ logger = logging.getLogger(__name__)
 #    50% :  Within 1/2 pitch
 #    25% :  Within 1 pitch
 #     0% :  > 1 pitch
-def PitchCmp(ref,samp):
+def pitch_cmp(ref,samp):
     ref = float(ref)
     ref_whole_high   = ref * 2**(2.0/12)
     ref_whole_low    = ref * 2**(-2.0/12)
@@ -72,3 +74,26 @@ def get_freq(fname, freq_ref):
     logger.info(max_freq)
 
     return max_freq
+
+def mid2freq(midi_note):
+    return 440 * 2 ** ((midi_note - 69) / 12)
+
+def read_midi(fname):
+    song = midi.read_midifile(fname)
+    song.make_ticks_abs()
+
+    tracks = []
+
+    for track in song:
+        for note in track:
+            if note.name == 'Note On':
+                return mid2freq(note.pitch)
+        #print([mid2freq(note.pitch) for note in track if note.name == 'Note On'])
+        #print([note for note in track if note.name == 'Note Off'])
+        #notes = [note for note in track if note.name == 'Note On']
+        #pitch = [note.pitch for note in notes]
+        #tick = [note.tick for note in notes]
+        #tracks += [tick, pitch]
+
+    #plt.plot(*tracks)
+    #plt.show()
