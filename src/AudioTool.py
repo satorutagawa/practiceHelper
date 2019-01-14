@@ -3,6 +3,7 @@ import logging
 import scipy.io.wavfile
 import numpy as np
 import midi
+import pydub
 
 #import matplotlib.pyplot as plt
 
@@ -48,7 +49,10 @@ def pitch_cmp(ref,samp):
         return 0
 
 def get_freq(fname, freq_ref):
-    [fs, data] = scipy.io.wavfile.read(fname)
+    sound = pydub.AudioSegment.from_file(fname)
+
+    data = np.array(sound.get_array_of_samples())
+    fs = sound.frame_rate
 
     logger.info("fs = %d" % fs)
     logger.info("#samples = %d" % data.size)

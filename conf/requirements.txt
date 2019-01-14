@@ -7,3 +7,4 @@ matplotlib
 #sympy
 #nose
 git+https://github.com/mgedmin/python-midi@python3
+pydub

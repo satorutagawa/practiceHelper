@@ -10,7 +10,7 @@ import AudioTool
 logger = logging.getLogger(__name__)
 
 def main():
-    input_file = "/data/440_flat.wav"
+    input_file = "/data/440_flat.m4a"
     input_midi = "/data/440.mid"
 
     t0 = time.time()
