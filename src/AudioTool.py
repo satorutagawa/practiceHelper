@@ -80,7 +80,29 @@ def get_freq(fname, freq_ref):
     return max_freq
 
 def mid2freq(midi_note):
-    return 440 * 2 ** ((midi_note - 69) / 12)
+    return 440 * 2 ** ((midi_note - 57) / 12)
+
+def create_midi(outfile):
+    # Instantiate a MIDI Pattern (contains a list of tracks)
+    pattern = midi.Pattern()
+    # Instantiate a MIDI Track (contains a list of MIDI events)
+    track = midi.Track()
+    # Append the track to the pattern
+    pattern.append(track)
+    # Instantiate a MIDI note on event, append it to the track
+    on = midi.NoteOnEvent(tick=0, velocity=20, pitch=midi.A_5)
+    track.append(on)
+    # Instantiate a MIDI note off event, append it to the track
+    off = midi.NoteOffEvent(tick=100, pitch=midi.A_5)
+    track.append(off)
+    # Add the end of track event, append it to the track
+    eot = midi.EndOfTrackEvent(tick=1)
+    track.append(eot)
+    # Print out the pattern
+    print(pattern)
+    # Save the pattern to disk
+    midi.write_midifile(outfile, pattern)
+
 
 def read_midi(fname):
     song = midi.read_midifile(fname)
@@ -88,16 +110,23 @@ def read_midi(fname):
 
     tracks = []
 
+#    for track in song:
+#        for note in track:
+#            notes = [note for note in track if note.name == 'Note On']
+#            pitch = [note.pitch for note in notes]
+#            tick = [note.tick for note in notes]
+#            tracks += [tick, pitch]
+
     for track in song:
-        for note in track:
-            if note.name == 'Note On':
-                return mid2freq(note.pitch)
-        #print([mid2freq(note.pitch) for note in track if note.name == 'Note On'])
-        #print([note for note in track if note.name == 'Note Off'])
-        #notes = [note for note in track if note.name == 'Note On']
-        #pitch = [note.pitch for note in notes]
-        #tick = [note.tick for note in notes]
-        #tracks += [tick, pitch]
+        tempo_evts = list(filter(lambda x: x.name == 'Set Tempo', track))
+        #logger.debug(track)
+        notes_on = list(filter(lambda x: x.name == 'Note On' , track))
+        notes_off = list(filter(lambda x: x.name == 'Note Off' , track))
+
+        for tempo_evt in tempo_evts:
+            logger.debug(tempo_evt.get_mpqn())
+        logger.debug(notes_on)
+        logger.debug(notes_off)
 
     #plt.plot(*tracks)
     #plt.show()
